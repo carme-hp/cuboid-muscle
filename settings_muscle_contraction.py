@@ -122,7 +122,7 @@ config = {
                     "OutputWriter":                 [],
 
                     "CellML": {
-                      "modelFilename":          variables.input_dir + "hodgkin_huxley-razumova.cellml",
+                      "modelFilename":          variables.cellml_file,
                       "meshName":               "fiber{}".format(variables.get_fiber_no(fiber_x, fiber_y)), 
                       "stimulationLogFilename": "out/" + scenario_name + "stimulation.log",
 

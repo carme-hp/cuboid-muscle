@@ -8,11 +8,11 @@ n_ranks = int(sys.argv[-1])
 # Timestep
 #################################################################
 
-dt_3D = 0.1             # time step of 3D mechanics
+dt_3D = .5             # time step of 3D mechanics
 dt_splitting = 2e-3     # time step of strang splitting
 dt_1D = 2e-3            # time step of 1D fiber diffusion
 dt_0D = 1e-3            # time step of 0D cellml problem
-end_time = 2.0         # end time of the simulation 
+end_time = 20.0         # end time of the simulation 
 output_interval = dt_3D # time interval between outputs
 
 # Muscle mechanics
@@ -20,7 +20,7 @@ output_interval = dt_3D # time interval between outputs
 
 # Mesh
 muscle_extent = [3.0, 3.0, 12.0]               
-muscle_offset = [0.0, 0.0, 6.0]
+muscle_offset = [0.0, 0.0, 0.0]
 n_elements = [4, 4, 16]                
 
 meshes = {
@@ -68,12 +68,12 @@ for x in range(mx):
 pmax = 7.3                                                  # maximum active stress
 rho = 10                                                    # density of the muscle
 material_parameters = [3.176e-10, 1.813, 1.075e-2, 1.0]     # [c1, c2, b, d]
-diffusion_prefactor = 3.828 / (500.0 * 0.58)                # Conductivity / (Am * Cm)
 
 # Muscle Fibers
 #################################################################
 
-fb_x, fb_y = 2, 2         # TODO: number of fibers
+# Meshes
+fb_x, fb_y = 8, 8         # TODO: number of fibers
 fb_points = 100             # TODO: number of points per fiber
 
 
@@ -94,17 +94,23 @@ for fiber_x in range(fb_x):
             "nRanks":               n_ranks
         }
 
+# material parameters
+diffusion_prefactor = 3.828 / (500.0 * 0.58)                # Conductivity / (Am * Cm)
+
+# stimulation parameters
 specific_states_call_enable_begin = 0.0                     # time of first fiber activation
 specific_states_call_frequency = 1e-3                       # frequency of fiber activation
 neuromuscular_junction_relative_size =.0
 value_for_stimulated_point = 20 #mV
 
 
-# Input files
+# Input files for fibers
 #################################################################
 
 import os
 input_dir = os.path.join(os.environ.get('OPENDIHU_HOME', '../../../../../../../'), "examples/electrophysiology/input/")
+
+cellml_file = input_dir + "hodgkin_huxley-razumova.cellml" #TODO
 
 fiber_distribution_file = input_dir + "MU_fibre_distribution_10MUs.txt"
 firing_times_file = input_dir + "MU_firing_times_always.txt"
