@@ -1,0 +1,11 @@
+build_release
+*.log
+__pycache__
+.scons*
+.sconf*
+*.out
+*.err
+.sconf_temp
+saved_data
+.scr
+precice-profiling
