@@ -32,21 +32,19 @@ else:
     print("Warning: There is no variables file, e.g:\n ./fibers ../settings_fibers.py fibers.py\n")
   exit(0)
 
-scenario_name = "muscle-contraction" 
 
 # define config
 config = {
-  "scenarioName":                   scenario_name,
+  "scenarioName":                   variables.scenario_name,
 
   "logFormat":                      "csv",
-  "mappingsBetweenMeshesLogFile":   "out/" + scenario_name + "/mappings_between_meshes.txt",
-  "solverStructureDiagramFile":     "out/" + scenario_name + "/solver_structure.txt",
+  "mappingsBetweenMeshesLogFile":   "out/" + variables.scenario_name + "/mappings_between_meshes.txt",
+  "solverStructureDiagramFile":     "out/" + variables.scenario_name + "/solver_structure.txt",
   
   "Meshes":                         variables.meshes,
   "MappingsBetweenMeshes": { 
       "mesh3D" : ["fiber{}".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]
   },
-
   "Solvers": {
     "diffusionSolver": {
       "solverType":                     "cg",
@@ -60,21 +58,46 @@ config = {
     "mechanicsSolver": {
       "solverType":                     "preonly",
       "preconditionerType":             "lu",
-      "relativeTolerance":              1e-10,
-      "absoluteTolerance":              1e-10,
+      "relativeTolerance":              1e-8,
+      "absoluteTolerance":              1e-8,
       "maxIterations":                  1e4,
       "snesLineSearchType":             "l2",
       "snesRelativeTolerance":          1e-5,
       "snesAbsoluteTolerance":          1e-5,
       "snesMaxIterations":              10,
       "snesMaxFunctionEvaluations":     1e8,
-      "snesRebuildJacobianFrequency":   5,
+      "snesRebuildJacobianFrequency":   3,
       "dumpFilename":                   "",
       "dumpFormat":                     "matlab"
     }
   },
+  "PreciceAdapter":{
+    "couplingEnabled":          True,
+    "timeStepOutputInterval":   100,                        # interval in which to display current timestep and time in console
+    "timestepWidth":            variables.dt_3D,                          # coupling time step width, must match the value in the precice config
+    "preciceConfigFilename":    variables.precice_file,    # the preCICE configuration file
+    "preciceParticipantName":   "Right-Muscle", 
+    "preciceSurfaceMeshes": [                                      # the precice meshes get created as the top or bottom surface of the main geometry mesh of the nested solver
+      {
+        "preciceMeshName":      "Right-Muscle-Mesh",         # precice name of the 2D coupling mesh
+        "face":                 "2-",                       # face of the 3D mesh where the 2D mesh is located, "2-" = left, "2+" = right (z-coordinate)
+      }
+    ],
+    "preciceSurfaceData": [
+      {
+        "mode":                 "write-displacements-velocities",    # mode is one of "read-displacements-velocities", "read-traction", "write-displacements-velocities", "write-traction"
+        "preciceMeshName":      "Right-Muscle-Mesh",                 # name of the precice coupling surface mesh, as given in the precice xml settings file
+        "displacementsName":    "Displacement",                     # name of the displacements "data", i.e. field variable, as given in the precice xml settings file
+        "velocitiesName":       "Velocity",                     # name of the velocities "data", i.e. field variable, as given in the precice xml settings file
 
-  "Coupling": {
+      },
+      {
+        "mode":                 "read-traction",                   # mode is one of "read-displacements-velocities", "read-traction", "write-displacements-velocities", "write-traction"
+        "preciceMeshName":      "Right-Muscle-Mesh",                 # name of the precice coupling surface mesh, as given in the precice xml settings 
+        "tractionName":         "Traction",                         # name of the traction "data", i.e. field variable, as given in the precice xml settings file
+      }
+    ],
+    "Coupling": {
     "timeStepWidth":            variables.dt_3D,
     "logTimeStepWidthAsKey":    "dt_3D",
     "durationLogKey":           "duration_3D",
@@ -124,7 +147,7 @@ config = {
                     "CellML": {
                       "modelFilename":          variables.cellml_file,
                       "meshName":               "fiber{}".format(variables.get_fiber_no(fiber_x, fiber_y)), 
-                      "stimulationLogFilename": "out/" + scenario_name + "stimulation.log",
+                      "stimulationLogFilename": "out/" + variables.scenario_name + "stimulation.log",
 
                       "statesInitialValues":                        [],
                       "initializeStatesToEquilibrium":              False,
@@ -167,7 +190,7 @@ config = {
                   {
                     "format":         "Paraview",
                     "outputInterval": int(1.0 / variables.dt_splitting * variables.output_interval),
-                    "filename":       "out/" + scenario_name + "/fibers",
+                    "filename":       "out/" + variables.scenario_name + "/fibers",
                     "fileNumbering":  "incremental",
                     "binary":         True,
                     "fixedFormat":    False,
@@ -237,7 +260,7 @@ config = {
           {
             "format":             "Paraview",
             "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-            "filename":           "out/" + scenario_name + "/muscle",
+            "filename":           "out/" + variables.scenario_name + "/muscle",
             "fileNumbering":      "incremental",
             "binary":             True,
             "fixedFormat":        False,
@@ -265,7 +288,7 @@ config = {
           "useAnalyticJacobian":        True,
           "useNumericJacobian":         False,
           "dumpDenseMatlabVariables":   False,
-          "loadFactorGiveUpThreshold":  1,
+          "loadFactorGiveUpThreshold":  1e-2,
           "loadFactors":                [],
           "scaleInitialGuess":          False,
           "extrapolateInitialGuess":    True,
@@ -281,9 +304,9 @@ config = {
           "initialValuesVelocities":    [[0, 0, 0] for _ in range(variables.nx * variables.ny * variables.nz)],
           "constantBodyForce":          (0, 0, 0),
 
-          "dirichletOutputFilename":    "out/" + scenario_name + "/dirichlet_output",
-          "residualNormLogFilename":    "out/" + scenario_name + "/residual_norm_log.txt",
-          "totalForceLogFilename":      "out/" + scenario_name + "/total_force_log.txt",
+          "dirichletOutputFilename":    "out/" + variables.scenario_name + "/dirichlet_output",
+          "residualNormLogFilename":    "out/" + variables.scenario_name + "/residual_norm_log.txt",
+          "totalForceLogFilename":      "out/" + variables.scenario_name + "/total_force_log.txt",
 
           "OutputWriter": [
             {"format": "PythonCallback", "outputInterval": 1, "callback": variables.write_average_position, "onlyNodalValues":True, "filename": "", "fileNumbering":'incremental'},
@@ -295,5 +318,6 @@ config = {
         }
       }
     }
+  }
   }
 }

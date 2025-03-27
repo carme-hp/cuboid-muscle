@@ -12,3 +12,6 @@ if not env['no_examples']:
     
   # create the main executable
   env.Program(target = 'muscle_contraction', source = "src/muscle_contraction.cpp")
+  env.Program(target = 'muscle_mechanics', source = "src/muscle_mechanics.cpp")
+  env.Program(target = 'linear_tendon', source = "src/linear_tendon.cpp")
+  env.Program(target = 'tendon', source = "src/tendon.cpp")
