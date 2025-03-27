@@ -12,9 +12,9 @@ scenario_name = "right-muscle"
 #################################################################
 
 # Mesh
-muscle_extent = [3.0, 3.0, 12.0]               
-muscle_offset = [0.0, 0.0, 16.0]
-n_elements = [4, 4, 16]                
+muscle_extent = [3.0, 3.0, 15.0]               
+muscle_offset = [0.0, 0.0, 20.0]
+n_elements = [8, 8, 24]                
 
 meshes = {
 
@@ -72,7 +72,7 @@ material_parameters = [3.176e-10, 1.813, 1.075e-2, 1.0]     # [c1, c2, b, d]
 
 # Meshes
 fb_x, fb_y = 8, 8         # TODO: number of fibers
-fb_points = 100             # TODO: number of points per fiber
+fb_points = 60             # TODO: number of points per fiber
 
 
 def get_fiber_no(fiber_x, fiber_y):

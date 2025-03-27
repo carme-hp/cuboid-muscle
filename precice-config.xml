@@ -88,7 +88,7 @@
       <participant name="Right-Muscle" />
 
       <max-time value="20.0"/>           
-      <time-window-size value="0.1"/>   
+      <time-window-size value="0.01"/>   
       <max-iterations value="25" />
 
       <acceleration:IQN-ILS>
@@ -98,16 +98,19 @@
         <data name="Velocity" mesh="Right-Muscle-Mesh"/>
         <data name="Traction" mesh="Left-Muscle-Mesh"/>
         <data name="Traction" mesh="Tendon-Mesh-Right"/>
-        <max-used-iterations value="50"/>
-        <time-windows-reused value="100"/>
+        <preconditioner type="residual-sum"/>
+        <filter type="QR2" limit="1e-3"/>
+        <initial-relaxation value="0.1"/>
+        <max-used-iterations value="40"/>
+        <time-windows-reused value="15"/>
       </acceleration:IQN-ILS>
 
 
-      <relative-convergence-measure limit="1e-2" data="Displacement" mesh="Tendon-Mesh-Left" strict="0"/>
+      <relative-convergence-measure limit="1e-3" data="Displacement" mesh="Tendon-Mesh-Left" strict="0"/>
       <relative-convergence-measure limit="1e-2" data="Velocity" mesh="Tendon-Mesh-Left" strict="0"/>
       <absolute-convergence-measure limit="1e-1" data="Traction" mesh="Left-Muscle-Mesh" strict="0"/>
 
-      <relative-convergence-measure limit="1e-2" data="Displacement" mesh="Right-Muscle-Mesh" strict="0"/>
+      <relative-convergence-measure limit="1e-3" data="Displacement" mesh="Right-Muscle-Mesh" strict="0"/>
       <relative-convergence-measure limit="1e-2" data="Velocity" mesh="Right-Muscle-Mesh" strict="0"/>
       <absolute-convergence-measure limit="1e-1" data="Traction" mesh="Tendon-Mesh-Right" strict="0"/>
 

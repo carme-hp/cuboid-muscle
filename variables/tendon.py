@@ -11,9 +11,9 @@ scenario_name = "tendon"
 #################################################################
 
 # Mesh
-tendon_extent = [3.0, 3.0, 4.0]               
-tendon_offset = [0.0, 0.0, 12.0]
-n_elements = [4, 4, 4]                
+tendon_extent = [3.0, 3.0, 5.0]               
+tendon_offset = [0.0, 0.0, 15.0]
+n_elements = [8, 8, 8]                
 
 meshes = {
 
@@ -41,11 +41,11 @@ meshes = {
 
 dirichlet_bc = {} 
 
-for k in range(nz):
-  dirichlet_bc[k*nx*ny] = [0.0, 0.0, None, None, None, None] # displacement ux uy uz, velocity vx vy vz
-  dirichlet_bc[k*nx*ny + nx-1] = [0.0, 0.0, None, None, None, None] # displacement ux uy uz, velocity vx vy vz
-  dirichlet_bc[k*nx*ny + ny*(nx-1)] = [0.0, 0.0, None, None, None, None] # displacement ux uy uz, velocity vx vy vz
-  dirichlet_bc[k*nx*ny + ny*(nx-1) + nx -1] = [0.0, 0.0, None, None, None, None] # displacement ux uy uz, velocity vx vy vz
+# for k in range(nz):
+#   dirichlet_bc[k*nx*ny] = [0.0, 0.0, None, None, None, None] # displacement ux uy uz, velocity vx vy vz
+#   dirichlet_bc[k*nx*ny + nx-1] = [0.0, 0.0, None, None, None, None] # displacement ux uy uz, velocity vx vy vz
+#   dirichlet_bc[k*nx*ny + ny*(nx-1)] = [0.0, 0.0, None, None, None, None] # displacement ux uy uz, velocity vx vy vz
+#   dirichlet_bc[k*nx*ny + ny*(nx-1) + nx -1] = [0.0, 0.0, None, None, None, None] # displacement ux uy uz, velocity vx vy vz
 
 neumann_bc = [] 
 
@@ -71,7 +71,7 @@ mu = 3.76                   # [N/cm^2=kPa]
 k1 = 42.217e3               # [N/cm^2=kPa]
 k2 = 411.360e3              # [N/cm^2=kPa]
 
-#material_parameters = [c, ca, ct, cat, ctt, mu, k1, k2]
+material_parameters = [c, ca, ct, cat, ctt, mu, k1, k2]
 
 # Write to file
 #################################################################
@@ -112,7 +112,7 @@ def write_average_position(data):
     z_value_end /= ny*nx
 
 
-    f = open("muscle_position.txt", "a")
+    f = open("tendon_position.txt", "a")
     f.write("{:6.2f} {:+2.8f} {:+2.8f}\n".format(t,z_value_begin, z_value_end))
     f.close()
 
